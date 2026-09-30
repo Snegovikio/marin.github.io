@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marin Kitagawa — фан-сайт ♡</title>
+<meta name="description" content="Фан-сайт посвящённый Марин Китагаве из аниме «Sono Bisque Doll wa Koi wo Suru». Арты, цитаты, факты и музыка.">
+<meta name="theme-color" content="#140a12">
+<meta property="og:title" content="Marin Kitagawa — фан-сайт ♡">
+<meta property="og:description" content="Розово-тёмный фан-сайт с галереей артов, цитатами и плеером открывающих и закрывающих.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("marin-theme");
+      if (saved) {
+        try { saved = JSON.parse(saved); } catch (e) {}
+      }
+      document.documentElement.setAttribute("data-theme", saved === "light" ? "light" : "dark");
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", saved === "light" ? "#fff6fa" : "#140a12");
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body class="is-locked">
+
+<div class="fx" aria-hidden="true">
+  <span class="fx__blob fx__blob--a"></span>
+  <span class="fx__blob fx__blob--b"></span>
+  <span class="fx__blob fx__blob--c"></span>
+  <span class="fx__grid"></span>
+  <span class="fx__grain"></span>
+  <canvas id="hearts" class="fx__hearts"></canvas>
+</div>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate__bg" aria-hidden="true"></div>
+  <div class="gate__halo" aria-hidden="true"></div>
+  <div class="gate__card">
+    <p class="gate__eyebrow"><span class="gate__dot"></span>Sono Bisque Doll wa Koi wo Suru · 2022</p>
+    <h1 class="gate__title" id="gateTitle">Marin<span>Kitagawa</span></h1>
+    <p class="gate__text">Добро пожаловать. Здесь живут все арты, все цитаты и вся любовь.<br>Нажми, чтобы войти — и включится музыка.</p>
+    <button class="visit" id="visitBtn" type="button">
+      <span class="visit__pulse" aria-hidden="true"></span>
+      <span class="visit__ring" aria-hidden="true"></span>
+      <span class="visit__face">
+        <span class="visit__label">Посетить</span>
+        <span class="visit__sub">♡</span>
+      </span>
+    </button>
+    <p class="gate__hint">Рекомендуем со звуком · прогресс <b id="gateProgress">0%</b></p>
+    <div class="gate__bar"><i id="gateBar"></i></div>
+  </div>
+</div>
+
+<header class="topbar" id="topbar">
+  <a class="topbar__brand" href="#hero">
+    <svg viewBox="0 0 32 32" class="topbar__heart" aria-hidden="true"><path d="M16 29S3 20.6 3 11.4C3 7 6.4 4 10.4 4c2.4 0 4.4 1.3 5.6 3.2C17.2 5.3 19.2 4 21.6 4 25.6 4 29 7 29 11.4 29 20.6 16 29 16 29z"/></svg>
+    <span>Marin&nbsp;Kitagawa</span>
+  </a>
+  <nav class="topbar__nav" aria-label="Навигация">
+    <a href="#about">О героине</a>
+    <a href="#gallery">Арты</a>
+    <a href="#quotes">Цитаты</a>
+    <a href="#music">Музыка</a>
+  </nav>
+  <div class="topbar__actions">
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="Переключить тему" title="Светлая / тёмная тема">
+      <svg class="icon-btn__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><path d="M12 2.6v2.4M12 19v2.4M2.6 12H5M19 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3L17 7M7 17l-1.7 1.7"/></g></svg>
+      <svg class="icon-btn__moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.2 8.2 0 019.5 4 8.4 8.4 0 1020 14.5z"/></svg>
+    </button>
+    <button class="icon-btn icon-btn--music" id="muteBtn" type="button" aria-label="Включить или выключить музыку" title="Музыка">
+      <span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    </button>
+    <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false"><i></i><i></i><i></i></button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero" id="hero">
+    <div class="hero__inner">
+      <div class="hero__copy">
+        <p class="tag reveal">♡ Фан-сайт</p>
+        <h2 class="hero__title reveal" data-delay="1">
+          <span class="hero__line">Мне</span>
+          <span class="hero__line hero__line--accent">совершенно</span>
+          <span class="hero__line">не всё равно</span>
+        </h2>
+        <p class="hero__lead reveal" data-delay="2">Марин Китагава — гяру с первого курса и аниме-фанатка. Костюмы шьёт не она: их делает её одноклассник Ваканa Годжо, тихий первокурсник, который годами прятал в комнате шитья своё увлечение куклами. Из косплея выросла история о любви.</p>
+        <div class="hero__cta reveal" data-delay="3">
+          <a class="btn btn--primary" href="#gallery">Смотреть арты <span>→</span></a>
+          <a class="btn btn--ghost" href="#about">Кто она такая</a>
+        </div>
+        <ul class="hero__stats reveal" data-delay="4">
+          <li><b data-count="2018">0</b><span>манга<br>стартовала</span></li>
+          <li><b data-count="15">0</b><span>томов<br>вышло</span></li>
+          <li><b data-count="12">0</b><span>серий<br>1-го сезона</span></li>
+        </ul>
+      </div>
+
+      <div class="hero__art reveal" data-delay="2">
+        <div class="hero__frame" data-tilt>
+          <img src="https://i.pinimg.com/originals/cf/fe/f2/cffef2bf575119c5b9b94b5652336fd0.jpg"
+               alt="Марин Китагава, арт с Pinterest"
+               referrerpolicy="no-referrer"
+               data-fallback="assets/img/placeholder.svg">
+          <span class="hero__shine" aria-hidden="true"></span>
+          <span class="hero__badge">PLA<br>LOVE</span>
+        </div>
+        <figure class="hero__chip hero__chip--1"><span>Костюмы шьёт он, а носит она</span></figure>
+        <figure class="hero__chip hero__chip--2"><span>Косплей-уровень: божественный</span></figure>
+        <span class="hero__petal" aria-hidden="true">❀</span>
+        <span class="hero__petal hero__petal--2" aria-hidden="true">❀</span>
+      </div>
+    </div>
+    <a class="scroll-hint" href="#about" aria-label="Листать вниз"><i></i></a>
+  </section>
+
+  <section class="section about" id="about">
+    <div class="section__head">
+      <p class="tag reveal">01 — Кто она</p>
+      <h3 class="section__title reveal" data-delay="1">Марин <em>Китагава</em></h3>
+      <p class="section__sub reveal" data-delay="2">Гяру, которая научилась показывать не только яркую внешность, но и настоящие чувства.</p>
+    </div>
+
+    <div class="about__grid">
+      <article class="card card--story reveal">
+        <div class="card__head"><span class="card__icon">♡</span><h4>История</h4></div>
+        <p><b>Ваканa Годжо</b> — сирота, воспитанный дедом Каору Годжо, мастером кукол хина. Ещё мальчиком он хотел стать мастером куколных голов, но подружка Нобара Аояги крикнула, что мальчикам куклы не нужны. Дружба кончилась, и Ваканa спрятал шитьё так глубоко, что почти перестал выходить из дома.</p>
+        <p><b>Марин Китагава</b> — гяру с первого курса, аниме-фанатка и будущая модель. Живёт одна: мать умерла в её детстве, отец часто в разъездах. Однажды Марин находит Вакану в школьной швейной комнате и затаскивает его в косплей — теперь он шьёт ей костюмы, от бронзовой бойцовой Вероники до ангела Ханиэль.</p>
+        <p>Он привыкает к людям, признаётся первым, и они женятся. В финале Ваканa возвращается к куклам как мастер, а Марин работает моделью.</p>
+        <div class="card__tags">
+          <span>Косплей</span><span>Шитьё</span><span>Куклы хина</span><span>Сэромэн</span><span>Манга</span>
+        </div>
+      </article>
+
+      <article class="card card--traits reveal" data-delay="1">
+        <div class="card__head"><span class="card__icon">✦</span><h4>Характер</h4></div>
+        <ul class="traits">
+          <li><b>Громкая</b> — входит в комнату и переписывает её под себя.</li>
+          <li><b>Упрямая</b> — если что-то решила, её не сдвинуть.</li>
+          <li><b>Не терпит осуждения</b> — мальчикам в куклы играть не полагается, и она это знает лучше других.</li>
+          <li><b>Дома одна</b> — мать умерла в детстве, отец в разъездах.</li>
+          <li><b>Аниме-фанатка</b> — комната забита постерами и мерчем.</li>
+          <li><b>Не шьёт сама</b> — костюмы делает Ваканa Годжо, она модель и косплеер.</li>
+        </ul>
+      </article>
+
+      <article class="card card--facts reveal" data-delay="2">
+        <div class="card__head"><span class="card__icon">❀</span><h4>Факты</h4></div>
+        <dl class="facts">
+          <div><dt>Серия</dt><dd>Sono Bisque Doll wa Koi wo Suru</dd></div>
+          <div><dt>Манга</dt><dd>Shinichi Fukuda, журнал Young Gangan</dd></div>
+          <div><dt>Публикация</dt><dd>январь 2018 — март 2025, 15 томов</dd></div>
+          <div><dt>Тираж</dt><dd>больше 15 млн копий</dd></div>
+          <div><dt>Аниме</dt><dd>CloverWorks, 1-й сезон 2022 (12 серий), 2-й — 2025</dd></div>
+          <div><dt>Дорама</dt><dd>MBS, 2024, 10 серий</dd></div>
+          <div><dt>Семья</dt><dd>мать умерла в детстве, отец в разъездах</dd></div>
+          <div><dt>В финале</dt><dd>замуж за Вакана, дочь Нитика, работа моделью</dd></div>
+        </dl>
+      </article>
+
+      <article class="card card--timeline reveal" data-delay="1">
+        <div class="card__head"><span class="card__icon">♪</span><h4>Таймлайн</h4></div>
+        <ol class="timeline">
+          <li><span>2018</span><p>Первые главы манги. Марин находит Вакану в школьной швейной комнате и втягивает в косплей.</p></li>
+          <li><span>2019</span><p>Первый костюм и первое событие. Сердце Марин меняется, в доме Вакану появляется Дзюдзю.</p></li>
+          <li><span>2020</span><p>Лето с бассейном и фейерверками, амане из Икэбукуро, начинается съёмка Coffin.</p></li>
+          <li><span>2021</span><p>Культура-фестиваль в школе и первый кроссдресс Марин.</p></li>
+          <li><span>2022</span><p>Аниме от CloverWorks: 12 серий первого сезона.</p></li>
+          <li><span>2023</span><p>Марин покупает DSLR и становится фотографом. Под Рождество признаётся в любви.</p></li>
+          <li><span>2024</span><p>Костюм Heaven’s Will и ангел Ханиэль, разлетевшийся по соцсетям. Драма на MBS.</p></li>
+          <li><span>2025</span><p>Второй сезон аниме и финал манги: свадьба и дочь Нитика.</p></li>
+        </ol>
+      </article>
+    </div>
+  </section>
+
+  <section class="section gallery" id="gallery">
+    <div class="section__head">
+      <p class="tag reveal">02 — Коллекция</p>
+      <h3 class="section__title reveal" data-delay="1">Все <em>арты</em></h3>
+      <p class="section__sub reveal" data-delay="2">Арты загружаются с Pinterest. Клик по картинке открывает её в полном размере, а «источник» ведёт к первоисточнику.</p>
+      <div class="gallery__tools reveal" data-delay="3">
+        <div class="chips" id="filters" role="tablist" aria-label="Фильтр галереи"></div>
+        <div class="gallery__tools-right">
+          <a class="btn btn--ghost btn--sm" id="pinSearch" href="https://ru.pinterest.com/search/pins/?q=marin%20kitagawa" target="_blank" rel="noopener noreferrer">Ещё на Pinterest ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="masonry" id="galleryGrid"></div>
+    <nav class="pager" id="pager" aria-label="Страницы галереи" hidden></nav>
+    <p class="gallery__empty" id="galleryEmpty" hidden>Ничего не нашлось в этой категории.</p>
+  </section>
+
+  <section class="section quotes" id="quotes">
+    <div class="section__head">
+      <p class="tag reveal">03 — Слова</p>
+      <h3 class="section__title reveal" data-delay="1">Строки <em>сериала</em></h3>
+      <p class="section__sub reveal" data-delay="2">Это официальные названия серий — строки, которые действительно есть в произведении. Мы не выдумываем реплики за персонажей.</p>
+    </div>
+    <div class="quotes__stage reveal" data-delay="2">
+      <span class="quotes__mark" aria-hidden="true">“</span>
+      <p class="quotes__text" id="quoteText">Two Complete Opposites</p>
+      <p class="quotes__author" id="quoteAuthor">— Драма · серия 1</p>
+      <div class="quotes__dots" id="quoteDots" role="tablist" aria-label="Цитаты"></div>
+    </div>
+  </section>
+
+  <section class="section music" id="music">
+    <div class="section__head">
+      <p class="tag reveal">04 — Звук</p>
+      <h3 class="section__title reveal" data-delay="1">Опенинги и <em>эендинги</em></h3>
+      <p class="section__sub reveal" data-delay="2">Плеер подхватит всё, что лежит в <code>assets/audio/</code>. Нет файлов? Перетащи mp3 в окно сайта — треки сохранятся в браузере и останутся здесь.</p>
+    </div>
+    <div class="tracks" id="tracks"></div>
+  </section>
+
+  <section class="section cta">
+    <div class="cta__card reveal">
+      <div class="cta__hearts" aria-hidden="true">♡</div>
+      <h3>Спасибо, что зашёл(а)</h3>
+      <p>Это фан-сайт, собранный с любовью. Все права на персонажа, арты и музыку принадлежат их создателям.</p>
+      <a class="btn btn--primary" href="#hero">Наверх ♡</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__in">
+    <div class="footer__brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true" class="footer__heart"><path d="M16 29S3 20.6 3 11.4C3 7 6.4 4 10.4 4c2.4 0 4.4 1.3 5.6 3.2C17.2 5.3 19.2 4 21.6 4 25.6 4 29 7 29 11.4 29 20.6 16 29 16 29z"/></svg>
+      <span>Marin Kitagawa фан-сайт</span>
+    </div>
+    <p class="footer__note">
+      Неофициальный фанатский проект. Не связан с Aniplex, Shinchosuha, Studio CloverWorks.
+      Арты в галерее подгружаются с Pinterest и остаются на стороне Pinterest — у каждой работы есть ссылка на источник. Все изображения и аудио — собственность правообладателей.
+    </p>
+    <p class="footer__year">© <span id="year"></span> · сделано с ♡ и перебором ярко-розового</p>
+  </div>
+</footer>
+
+<div class="player" id="player" hidden>
+  <div class="player__art" id="playerArt" aria-hidden="true">♪</div>
+  <div class="player__meta">
+    <b id="playerTitle">Тишина</b>
+    <span id="playerSub">трек не выбран</span>
+  </div>
+  <button class="player__btn" id="prevBtn" type="button" aria-label="Предыдущий трек">‹</button>
+  <button class="player__btn player__btn--main" id="playBtn" type="button" aria-label="Играть / пауза"><span class="player__tri"></span></button>
+  <button class="player__btn" id="nextBtn" type="button" aria-label="Следующий трек">›</button>
+  <button class="player__btn player__btn--loop" id="loopBtn" type="button" aria-label="Повтор: весь плейлист" aria-pressed="true"><span class="loop__ico">⟳</span><i class="loop__one">1</i></button>
+  <div class="player__vol">
+    <span aria-hidden="true">♪</span>
+    <input type="range" id="volBtn" min="0" max="100" value="55" aria-label="Громкость">
+  </div>
+  <div class="player__prog" id="playerProg" role="progressbar" aria-label="Прогресс"><i id="playerFill"></i></div>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" id="lbClose" type="button" aria-label="Закрыть">✕</button>
+  <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" type="button" aria-label="Предыдущий">‹</button>
+  <button class="lightbox__nav lightbox__nav--next" id="lbNext" type="button" aria-label="Следующий">›</button>
+  <figure class="lightbox__fig">
+    <div class="lightbox__stage" id="lbStage"></div>
+    <figcaption><b id="lbTitle">Арт</b><span id="lbTags"></span></figcaption>
+  </figure>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/gallery.js"></script>
+<script src="assets/js/media.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
