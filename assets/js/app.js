@@ -56,9 +56,20 @@
     var cv = $("#hearts");
     if (!cv || reduceMotion) return;
     var ctx = cv.getContext("2d");
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var compact = Math.min(window.innerWidth, window.innerHeight) < 700;
+    var dpr = Math.min(window.devicePixelRatio || 1, compact ? 1.5 : 2);
+    var maxHearts = compact ? 16 : 34;
     var hearts = [];
     var W = 0, H = 0;
+    var raf = null;
+    var c1 = "#ff5a9c";
+    var c2 = "#ffb0d0";
+
+    function readColors() {
+      var style = getComputedStyle(document.documentElement);
+      c1 = style.getPropertyValue("--pink-500").trim() || "#ff5a9c";
+      c2 = style.getPropertyValue("--pink-300").trim() || "#ffb0d0";
+    }
 
     function resize() {
       W = cv.clientWidth;
@@ -93,9 +104,6 @@
 
     function frame() {
       ctx.clearRect(0, 0, W, H);
-      var style = getComputedStyle(document.documentElement);
-      var c1 = style.getPropertyValue("--pink-500").trim() || "#ff5a9c";
-      var c2 = style.getPropertyValue("--pink-300").trim() || "#ffb0d0";
       for (var i = 0; i < hearts.length; i++) {
         var h = hearts[i];
         h.y -= h.vy;
@@ -116,14 +124,32 @@
       for (var j = hearts.length - 1; j >= 0; j--) {
         if (hearts[j].y < -40) hearts.splice(j, 1);
       }
-      while (hearts.length < 34) spawn(false);
-      requestAnimationFrame(frame);
+      while (hearts.length < maxHearts) spawn(false);
+      raf = requestAnimationFrame(frame);
+    }
+
+    function pause() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = null;
+    }
+    function play() {
+      if (raf === null) raf = requestAnimationFrame(frame);
     }
 
     resize();
-    window.addEventListener("resize", resize);
-    for (var i = 0; i < 22; i++) spawn(true);
-    frame();
+    readColors();
+    var themeBtn = $("#themeBtn");
+    if (themeBtn) themeBtn.addEventListener("click", function () { setTimeout(readColors, 30); });
+    window.addEventListener("resize", function () {
+      resize();
+      if (reduceMotion) return;
+      ctx.clearRect(0, 0, W, H);
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) pause(); else play();
+    });
+    for (var i = 0; i < Math.min(22, maxHearts); i++) spawn(true);
+    play();
   }
 
   /* ------------------------------ CURSOR GLOW ------------------------------ */
@@ -131,6 +157,7 @@
   function initCursor() {
     var el = $("#cursorGlow");
     if (!el || reduceMotion) return;
+    if (window.matchMedia("(hover: none)").matches) return;
     var x = 0, y = 0, tx = 0, ty = 0, on = false;
     window.addEventListener("mousemove", function (e) {
       tx = e.clientX; ty = e.clientY;
@@ -231,16 +258,34 @@
     }, { passive: true });
 
     if (burger && nav) {
-      burger.addEventListener("click", function () {
-        var open = nav.classList.toggle("is-open");
+      function setMenu(open) {
+        nav.classList.toggle("is-open", open);
         burger.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      burger.addEventListener("click", function () {
+        setMenu(!nav.classList.contains("is-open"));
       });
       nav.addEventListener("click", function (e) {
-        if (e.target.tagName === "A") {
-          nav.classList.remove("is-open");
-          burger.setAttribute("aria-expanded", "false");
+        if (e.target.tagName === "A") setMenu(false);
+      });
+      document.addEventListener("click", function (e) {
+        if (!nav.classList.contains("is-open")) return;
+        if (nav.contains(e.target) || burger.contains(e.target)) return;
+        setMenu(false);
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && nav.classList.contains("is-open")) {
+          setMenu(false);
+          burger.focus();
         }
       });
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 860) setMenu(false);
+      });
+      var mq = window.matchMedia("(min-width: 861px)");
+      var onMq = function (e) { if (e.matches) setMenu(false); };
+      if (mq.addEventListener) mq.addEventListener("change", onMq);
+      else if (mq.addListener) mq.addListener(onMq);
     }
 
     var sections = $$("main section[id]");
@@ -806,9 +851,9 @@
         player.index = 0;
         player.audio.removeAttribute("src");
         $("#playerTitle").textContent = "Музыка не загружена";
-        $("#playerSub").textContent = "добавь треки в assets/audio";
+        $("#playerSub").textContent = "перетащи mp3 в окно сайта";
         paintPlaying();
-        toast("Треки не найдены — положи mp3 в assets/audio", 4200);
+        toast("Треки не загрузились — перетащи mp3 в окно сайта", 4200);
         return;
       }
       paintPlaying();
@@ -822,11 +867,22 @@
     $("#muteBtn").addEventListener("click", togglePlay);
 
     var prog = $("#playerProg");
-    prog.addEventListener("click", function (e) {
+    function seekTo(clientX) {
       if (!player.audio.duration) return;
       var r = prog.getBoundingClientRect();
-      player.audio.currentTime = ((e.clientX - r.left) / r.width) * player.audio.duration;
-    });
+      var p = Math.min(Math.max((clientX - r.left) / r.width, 0), 1);
+      player.audio.currentTime = p * player.audio.duration;
+    }
+    prog.addEventListener("click", function (e) { seekTo(e.clientX); });
+    if (window.PointerEvent) {
+      prog.addEventListener("pointerdown", function (e) {
+        prog.setPointerCapture(e.pointerId);
+        seekTo(e.clientX);
+      });
+      prog.addEventListener("pointermove", function (e) {
+        if (e.buttons || e.pressure > 0) seekTo(e.clientX);
+      });
+    }
 
     vol.addEventListener("input", function () {
       var v = Number(vol.value);
@@ -837,7 +893,8 @@
     });
 
     document.addEventListener("keydown", function (e) {
-      if (e.target.matches("input, textarea")) return;
+      var t = e.target;
+      if (t && t.matches && t.matches("input, textarea, select, [contenteditable]")) return;
       if (e.code === "Space" && document.body.classList.contains("is-entered") && $("#lightbox").hidden) {
         e.preventDefault();
         togglePlay();
@@ -858,11 +915,11 @@
 
   function togglePlay() {
     if (!player.list.length) {
-      toast("Музыка не загружена — добавь трек в assets/audio");
+      toast("В плейлисте пока нет треков");
       return;
     }
     if (allBroken()) {
-      toast("Треки не найдены — положи mp3 в assets/audio", 3400);
+      toast("Треки не загрузились — перетащи mp3 в окно сайта", 3400);
       return;
     }
     if (player.audio.paused) {
@@ -934,7 +991,7 @@
       hint.innerHTML =
         '<span class="track__kind">пусто</span>' +
         '<div class="track__info"><b>Треков пока нет</b>' +
-        "<span>Положи mp3 в assets/audio и обнови assets/js/media.js — или просто перетащи файлы в это окно браузера.</span></div>";
+        "<span>Перетащи mp3 в это окно — треки сохранятся в браузере и останутся здесь.</span></div>";
       box.appendChild(hint);
       return;
     }
@@ -1017,7 +1074,7 @@
       renderTracks();
       if (allBroken()) {
         $("#playerTitle").textContent = "Музыка не загружена";
-        $("#playerSub").textContent = "добавь треки в assets/audio";
+        $("#playerSub").textContent = "перетащи mp3 в окно сайта";
       }
     });
   }
@@ -1081,13 +1138,11 @@
       if (p < 100 && bar) bar.style.width = "100%";
       if (p < 100 && num) num.textContent = "100%";
 
-      setTimeout(function () {
-        if (player.list.length) {
-          loadCurrent(true);
-        } else {
-          toast("Музыка не загружена — перетащи треки сюда", 3600);
-        }
-      }, 620);
+      if (player.list.length) {
+        loadCurrent(true);
+      } else {
+        setTimeout(function () { toast("Музыка не загружена — перетащи треки сюда", 3600); }, 620);
+      }
     }
 
     if (btn) btn.addEventListener("click", enter);
